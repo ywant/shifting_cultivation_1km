@@ -1,0 +1,117 @@
+# ============================================================
+# Configuration for the shifting cultivation classifier
+# EfficientNet-B1 | 4-band PlanetScope | 5 land-use classes
+#
+# Classes:
+#   0 - Forest         (f)
+#   1 - Shifting cult. (sc)
+#   2 - Sec. veg./agr. (sa)
+#   3 - Agriculture    (a)
+#   4 - Mosaic         (m)
+#
+# Usage:
+#   python main.py --config configs/sc_classification.yaml
+#   python main.py --config configs/sc_classification.yaml \
+#                  --mode test --model_path saved_models/bestF1.pkl
+# ============================================================
+
+# ---- Run mode ----
+mode: train                    # 'train' | 'test'
+
+# ---- Model ----
+model_type: torchEfficientnetb1
+img_ch: 4                      # R, G, B, NIR
+output_ch: 5                   # Number of land-use classes
+pretrained: 1                  # Load ImageNet weights for feature extractor
+keep_all_features: 1
+t: 3                           # Unused for EfficientNet; kept for compatibility
+nnlevel: 4                     # Unused for EfficientNet; kept for compatibility
+
+# ---- Task ----
+task: classification
+train_mode: classic            # 'classic' (supervised) | 'wsl' (weakly supervised)
+
+# ---- Training hyperparameters ----
+num_epochs: 800
+batch_size: 10
+lr: 0.005
+beta1: 0.5
+beta2: 0.999
+weightDecay: 0.1
+lr_decay_rate: 0.6
+lr_decay_frequency: 30
+min_lr: 0.00001
+augmentation_prob: 0.5
+
+# ---- Loss function ----
+# MCE  = multi-class cross-entropy (standard choice for 5-class problem)
+# wBCE = weighted binary cross-entropy (for binary SC vs. non-SC)
+loss_func: MCE
+conf_score: 0                  # 1 = use per-sample confidence weights in loss
+norm_wei: 0                    # 1 = normalise confidence weights
+positiveWeight: 5.0            # Class weight for wBCE (ignored for MCE)
+
+# ---- Early stopping ----
+earlystop: 1
+patience: 50
+
+# ---- Data paths ----
+# Replace with your actual paths; keep relative for portability.
+# Two date-directories are supported to handle multi-temporal inputs.
+classification_label_fn: data/labels/sc_labels.csv
+  # Required columns: path, label, useCase (train/test), augProb, id
+train_path1: data/patches/date1/
+train_path2: data/patches/date2/
+valid_path1: data/patches/date1/
+valid_path2: data/patches/date2/
+test_path1:  data/patches/date1/
+test_path2:  data/patches/date2/
+mergeTrainValid: 1             # Split train_path1/2 into train + valid internally
+split_ratio: 0.8               # Fraction of *sites* used for training
+split_save_dir: data/splits/   # Save JSON split for reproducibility (set null to skip)
+
+# ---- DataLoader ----
+num_workers: 8
+input_size: 234                # Patch spatial size (px)
+
+# ---- Input preprocessing ----
+use_color: 1
+onlyRGB: 0                     # 0 = use all 4 bands (recommended)
+imageNetnorm: 0                # 1 = apply ImageNet mean/std to RGB channels
+meanstdnorm: 0
+input_rescale: 0
+add_ndvi: 0                    # 1 = append NDVI as a 5th channel
+rgb2gray: 0
+expandGray: 0
+
+# ---- Output paths ----
+model_path:     saved_models/
+result_path:    results/
+checkpoint_dir: checkpoints/
+
+# ---- Logging & callbacks ----
+log_step: 2
+val_step: 2
+saveImages: 1
+imageCallbackDir: ./visionCallbacks
+image_callback_freq: 5
+model_suf: ""                  # Optional suffix for checkpoint directory name
+
+# ---- Weights & Biases ----
+wandb:
+  log: true
+  project: shifting-cultivation
+  name: ${model_type}
+  public: true
+  config:
+    model_name: ${model_type}
+
+# ---- Unused / kept for compatibility ----
+add_input2: 0
+add_outputs: 0
+test_vis: 0
+notree: 0
+pred_mode: pred
+add_chm: 0
+add_exgi: 0
+add_seg: 0

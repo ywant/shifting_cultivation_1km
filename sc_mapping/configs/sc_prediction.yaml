@@ -1,0 +1,94 @@
+# ============================================================
+# Inference configuration for the shifting cultivation classifier
+# EfficientNet-B1 | 4-band PlanetScope NICFI basemaps | 5 classes
+#
+# Runs patch-based prediction over NICFI GeoTIFF basemap tiles,
+# writing one output GeoTIFF per input tile.
+#
+# Usage:
+#   python predict.py --config configs/sc_prediction.yaml
+#
+# Output class indices:
+#   0 - Forest         (f)
+#   1 - Shifting cult. (sc)
+#   2 - Sec. veg./agr. (sa)
+#   3 - Agriculture    (a)
+#   4 - Mosaic         (m)
+# ============================================================
+
+# ---- Mode ----
+mode: pred
+pred_mode: pred                # 'pred' = full tile prediction
+                               # 'test' = predict on labelled test patches
+                               # 'embedding' = extract feature embeddings
+pred_tile: all                 # 'all' = predict every tile in input_image_dir
+                               # 'selective' = use pred_tile_gpkg mask
+
+# ---- Model ----
+model_type: torchEfficientnetb1
+  # Note: in older configs this was 'torchEfficientnetb1_dense'.
+  # The cleaned solver uses the dense head by default; the suffix is no longer needed.
+model_path: saved_models/bestF1.pkl
+  # Point to the final trained checkpoint before submission.
+  # This should match the model deposited on Zenodo.
+pretrained: 1
+img_ch: 4
+output_ch: 5
+t: 3
+nnlevel: 4
+keep_all_features: 0
+
+# ---- Task ----
+task: classification
+
+# ---- Input imagery ----
+# NICFI PlanetScope basemap directories (one entry per time period).
+# Each directory should contain GeoTIFF tiles with prefix defined by
+# input_image_pref.
+input_image_dir:
+  - data/nicfi_basemaps/2019-12_2020-05/
+  # Add additional time periods as needed:
+  # - data/nicfi_basemaps/2020-06_2020-11/
+
+input_image_pref: Clip          # Filename prefix filter (e.g. 'Clip*.tif')
+input_image_type: .npy          # File format of pre-tiled patches
+
+# ---- Tile / batch settings ----
+# Patches are extracted from each GeoTIFF using a sliding window.
+BATCH_SIZE: 1000
+HEIGHT: 200
+WIDTH: 200
+STRIDE: 200                    # Set STRIDE < HEIGHT/WIDTH for overlapping tiles
+
+# ---- Output ----
+output_dir: results/predictions/
+output_suffix: global_2020      # Appended to each output filename
+output_image_type: .tif
+output_dtype: float32
+output_table_type: .csv
+
+# ---- Selective prediction (optional) ----
+# Only used when pred_tile = 'selective'.
+# Supply a GeoPackage of 1-degree grid cells to predict.
+pred_tile_gpkg: null            # e.g. data/grids/pantropical_grid.gpkg
+
+# ---- Input preprocessing ----
+use_color: 1
+onlyRGB: 0
+imageNetnorm: 0
+input_rescale: 0
+add_ndvi: 0
+band_select: 1
+new_bands: [0, 1, 2]           # Band indices to keep (0=R, 1=G, 2=B, 3=NIR)
+input_size: 234                # Patch spatial size (px) — must match training
+
+# ---- Misc ----
+upscale: 1                     # Upscale predictions to input resolution
+sum_output: 0
+num_workers: 1
+add_input2: 0
+add_outputs: 0
+add_chm: 0
+add_ndvi: 0
+add_seg: 0
+model_semi: 1

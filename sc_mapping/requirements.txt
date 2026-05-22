@@ -1,0 +1,27 @@
+# Core deep learning
+torch>=2.0.0
+torchvision>=0.15.0
+torchinfo>=1.8.0
+
+# Test-time augmentation
+ttach>=0.0.3
+
+# Geospatial / imagery
+rasterio>=1.3.0
+numpy>=1.24.0
+opencv-python>=4.7.0
+geopandas>=0.14.0
+
+# Image preprocessing
+scikit-image>=0.21.0
+albumentations>=1.3.0
+
+# Data handling
+pandas>=2.0.0
+scikit-learn>=1.3.0
+
+# Config
+pyyaml>=6.0
+
+# Logging (optional — set use_wandb: 0 in config to skip)
+wandb>=0.16.0
