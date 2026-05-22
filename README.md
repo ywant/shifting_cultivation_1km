@@ -1,0 +1,1 @@
+# shifting_cultivation_1km
