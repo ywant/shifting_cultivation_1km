@@ -75,11 +75,11 @@ Predictions use **NICFI PlanetScope basemap** tiles (4-band R/G/B/NIR, 4.77 m)  
 ### Model weights
 Pre-trained model weights, example training patches, and a sample label CSV are deposited on Zenodo: **[DOI placeholder — update after publication]**
 
-| File | Size | MD5 | Description |
-|------|------|-----|-------------|
-| `bestF1.pkl` | 30.67 MB | `518e72769ea02bf5ec6b8ca1ca98e272` | Trained EfficientNet-B1 weights |
-| `samples_example.zip` | 35.07 MB | `f4dcfa442158421093ef079de2ef6a7d` | Example PlanetScope training patches (.npy) |
-| `sample_csv_demo.csv` | — | `223fb02bedc35d26be2af0c7a9704284` | Example label CSV with required column format |
+| File | Description |
+|------|-------------|
+| `bestF1.pkl` | Trained EfficientNet-B1 weights |
+| `samples_example.zip` | Example PlanetScope training patches (.npy) |
+| `sample_csv_demo.csv` | Example label CSV with required column format |
 
 Download `bestF1.pkl` and place it at `saved_models/bestF1.pkl` before running inference.
 
