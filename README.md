@@ -12,8 +12,7 @@ This repository contains all code needed to reproduce the shifting cultivation m
 
 1. **Model training** — train the EfficientNet-B1 classifier on labelled PlanetScope patches
 2. **Prediction** — run inference over NICFI basemap tiles to produce the pantropical map
-3. **Analysis** — accuracy assessment, country statistics, and environmental correlates
-
+3. **Analysis** — accuracy assessment
 ---
 
 ## Repository structure
@@ -75,7 +74,7 @@ Pre-trained model weights, example training patches, and a sample label CSV are 
 Download `bestF1.pkl` and place it at `saved_models/bestF1.pkl` before running inference.
 
 ### Training labels
-A sample label CSV (`sample_csv_demo.csv`) is deposited on Zenodo showing the required format. Required columns: `path`, `label`, `useCase`, `augProb`, `id`. Please replact the path to your own.
+A sample label CSV (`sample_csv_demo.csv`) is deposited on Zenodo showing the required format. Required columns: `path`, `label`, `useCase`, `augProb`, `id`. Please replace the path to your own.
 
 ### Class legend
 | Index | Class |
@@ -101,7 +100,6 @@ Training saves three checkpoints to `saved_models/`:
 - `bestF1.pkl` — highest validation macro-F1 *(used for prediction)*
 - `epoch_N.pkl` — periodic snapshots every 30 epochs
 
-To monitor training with Weights & Biases, set `use_wandb: 1` in the config and run `wandb login` beforehand. W&B is entirely optional; set `use_wandb: 0` to skip.
 
 ---
 
@@ -167,62 +165,7 @@ Reference: Olofsson, P. et al. (2014). *Remote Sensing of Environment*, 148, 42�
 
 ---
 
-## Analysis notebooks
-
-All notebooks are in `analysis/notebooks/`. Hardcoded paths at the top of each notebook should be updated to point to your local data before running.
-
-### Country-level statistics
-
-**`country_statistic_with_uncertainty.ipynb`**
-Computes per-country SC area statistics from prediction pixel centroids joined to country boundaries. Applies area-adjusted uncertainty from the validation results (User Accuracy) to estimate the confidence range on national SC extent estimates. Outputs a GeoPackage with country-level class areas and uncertainty columns used by the figure notebooks.
-
-**`country_statistics_fig1.ipynb`**
-Produces the country-level figures in the paper, including: a choropleth map of national SC extent; a ranked bar chart of the top-20 countries by SC area; and stacked bars showing SC as a share of total agricultural land. Inputs the GeoPackage from `country_statistic_with_uncertainty.ipynb`.
-
-### Environmental and socioeconomic correlates
-
-**`cropland_sc_GDP_per_capita.ipynb`**
-Analyses the relationship between national SC extent and GDP per capita (World Bank, 2020). Merges SC country statistics with World Bank GDP data and plots SC area against GDP per capita across tropical countries.
-
-**`environment_economic.ipynb`**
-Examines the association between SC land share and the Human Development Index (HDI). Countries are grouped into HDI classes (Low / Medium / High / Very High) and SC land share is compared across groups using violin plots and Pearson correlation.
-
-**`elevation_slope.ipynb`**
-Characterises the topographic context of SC using elevation and slope values extracted at SC pixel centroids. Produces per-continent histograms and summary statistics (median, IQR) for elevation and slope distributions across Africa, Asia-Oceania, and the Americas.
-
-**`transition.ipynb`**
-Analyses the spatial proximity of SC pixels to plantation agriculture and conventional cropland using nearest-neighbour distance calculations. Reports median distances by continent and produces violin plots comparing plantation vs cropland proximity, providing evidence on agricultural transition dynamics.
-
-### Tree cover loss
-
-**`tree_loss_1km_display.ipynb`**
-Categorises 1-degree SC grid cells by Hansen tree cover loss intensity into five activity classes (No loss / Low / Moderate / High / Very high) using percentile thresholds. Produces a boxplot of loss distributions by activity class and saves the classified grid for cartographic display.
-
-**`tree_loss_percentile_countries.ipynb`**
-Aggregates tree cover loss activity classes to the country level and computes the percentage of SC grid cells in high-activity classes per country. Calculates Spearman rank correlation between national SC extent and high-activity loss fraction, and produces a labelled scatter plot of the top countries.
-
----
 
 ## Reproducibility notes
 
-- All random seeds are fixed at 42 (training, data splitting, GEE sampling).
-- The train/validation split is saved as a JSON file in `data/splits/` on first run, ensuring the same split is used for any subsequent training run.
-- The GEE stratified sampling script exports a CSV with a fixed seed; the deposited validation GeoPackage on Zenodo is the one used in the paper.
-- Model weights (`bestF1.pkl`, MD5: `518e72769ea02bf5ec6b8ca1ca98e272`) deposited on Zenodo correspond to the `bestF1.pkl` checkpoint from the training run described in the paper. The MD5 hash can be used to verify download integrity.
-
----
-
-## Citation
-
-If you use this code or the SC map, please cite:
-
-```
-[Citation placeholder — to be filled after acceptance]
-```
-
----
-
-## License
-
-Code: MIT License. See `LICENSE`.
-Map outputs: CC BY 4.0.
+- Model weights (`bestF1.pkl`) deposited on Zenodo correspond to the `bestF1.pkl` checkpoint from the training run described in the paper. 
