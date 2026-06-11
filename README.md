@@ -42,15 +42,6 @@ sc-mapping/
     │   ├── gee/
     │   │   └── stratified_sampling.js   GEE stratified sample design
     │   └── validation.ipynb             Olofsson et al. accuracy assessment
-    └── notebooks/
-        ├── country_statistic_with_uncertainty.ipynb
-        ├── country_statistics_fig1.ipynb
-        ├── cropland_sc_GDP_per_capita.ipynb
-        ├── elevation_slope.ipynb
-        ├── environment_economic.ipynb
-        ├── transition.ipynb
-        ├── tree_loss_1km_display.ipynb
-        └── tree_loss_percentile_countries.ipynb
 ```
 
 ---
